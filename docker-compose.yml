@@ -1,4 +1,4 @@
-on: '3'
+version: '3'
 
 services:
   lb:
@@ -35,10 +35,9 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     restart: always
-
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
     ports:
-      - "3000:3000"
+      - "9100:9100"
     restart: always
