@@ -47,3 +47,18 @@ services:
     ports:
       - "3000:3000"
     restart: alwayts
+  redis:
+    image: redis:alpine
+    container_name: redis
+    restart: always
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: testdb
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+volumes:
+  mysql_data:
