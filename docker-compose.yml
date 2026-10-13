@@ -12,21 +12,24 @@ services:
     depends_on:
       - web1
       - web2
-
   web1:
-    image: nginx:latest
+    build: ./web1
     container_name: web1
-    volumes:
-      - ./web1:/usr/share/nginx/html
+    environment:
+      - HOSTNAME=web1
+    depends_on:
+      - redis
+      - mysql
     restart: always
-
   web2:
-    image: nginx:latest
+    build: ./web2
     container_name: web2
-    volumes:
-      - ./web2:/usr/share/nginx/html
+    environment:
+      - HOSTNAME=web2
+    depends_on:
+      - redis
+      - mysql
     restart: always
-
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -46,7 +49,7 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
-    restart: alwayts
+    restart: always
   redis:
     image: redis:alpine
     container_name: redis
