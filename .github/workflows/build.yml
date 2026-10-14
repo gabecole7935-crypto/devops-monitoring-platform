@@ -25,11 +25,11 @@ jobs:
         with:
           context: ./web1
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/project1-web1:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/devops:latest
 
       - name: Build and push web2
         uses: docker/build-push-action@v5
         with:
           context: ./web2
           push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/project1-web2:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/devops:latest
