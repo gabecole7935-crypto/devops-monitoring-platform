@@ -13,7 +13,7 @@ services:
       - web1
       - web2
   web1:
-    image: gabecole/project1-web1:latest
+    build: ./web1
     container_name: web1
     environment:
       - HOSTNAME=web1
@@ -22,7 +22,7 @@ services:
       - mysql
     restart: always
   web2:
-    image: gabecole/project1-web1:latest
+    build: ./web2
     container_name: web2
     environment:
       - HOSTNAME=web2

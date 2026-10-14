@@ -12,7 +12,7 @@ jobs:
       - name: Check docker-compose syntax
         run: docker compose config
       - name: Check nginx config
-        run: docker compose run --rm lb nginx -t
+        run: docker compose run --rm --no-deps lb nginx -t
 
   build:
     runs-on: ubuntu-latest
