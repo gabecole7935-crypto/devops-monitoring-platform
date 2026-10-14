@@ -12,7 +12,8 @@ jobs:
       - name: Check docker-compose syntax
         run: docker compose config
       - name: Check nginx config
-        run: docker compose run --rm --no-deps lb nginx -t
+        run: |
+          docker run --rm -v ${{ github.workspace }}/lb/default.conf:/etc/nginx/conf.d/default.conf nginx nginx -t
 
   build:
     runs-on: ubuntu-latest
