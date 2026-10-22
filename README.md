@@ -1,95 +1,103 @@
-# DevOps 监控管理平台 (DevOps Monitoring Platform)
+# 🚀 DevOps Monitoring Platform
 
-基于 Docker Compose 构建的一套完整的服务器监控与管理系统。采用 Nginx 负载均衡、Flask 后端、Redis 缓存、MySQL 持久化，并集成了 Prometheus + Grafana 的全链路监控。
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Nginx](https://img.shields.io/badge/Nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)](https://nginx.org/)
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-000000?style=for-the-badge&logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
+[![Prometheus](https://img.shields.io/badge/Prometheus-E6522C?style=for-the-badge&logo=prometheus&logoColor=white)](https://prometheus.io/)
 
-## 🏗️ 系统架构
+**🌐 Language: [English](README.md) | [简体中文](README_zh.md)**
+
+A high-availability server monitoring and management system built with Docker Compose. It integrates Nginx load balancing, Flask backend, Redis cache, MySQL persistence, and a full-link monitoring closed loop with Prometheus + Grafana.
+
+## 🏗️ Architecture
 
 ```text
-      用户浏览器
-          │
-          ▼
-   [Nginx 负载均衡器 (lb)] (端口: 8080)
-          │
-    ┌─────┴─────┐
-    ▼           ▼
-[Flask web1] [Flask web2] (提供管理后台页面)
-    │           │
-    ├───────────┴───────────┐
-    ▼                       ▼
-[Redis] (缓存访问计数)   [MySQL] (存储用户/告警/日志数据)
-                            │
-                            ▼
-                     [Prometheus] (监控数据采集)
-                            │
-                            ▼
-                     [Node Exporter] (暴露宿主机指标)
-                            │
-                            ▼
-                       [Grafana] (可视化图表)
-🛠️ 技术栈
-容器化与编排：Docker / Docker Compose
+      Browser
+         │
+         ▼
+ [Nginx Load Balancer (lb)] (Port: 8080)
+         │
+   ┌─────┴─────┐
+   ▼           ▼
+[Flask web1] [Flask web2] (Web Dashboard)
+   │           │
+   ├───────────┴───────────┐
+   ▼                       ▼
+[Redis] (Cache)         [MySQL] (Data Persistence)
+                           │
+                           ▼
+                    [Prometheus] (Metrics Collection)
+                           │
+                           ▼
+                    [Node Exporter] (Host Metrics)
+                           │
+                           ▼
+                      [Grafana] (Visualization)
+🛠️ Tech Stack
+Containerization & Orchestration: Docker / Docker Compose
 
-Web 服务器与代理：Nginx (反向代理、负载均衡)
+Web Server & Proxy: Nginx (Reverse Proxy, Load Balancing)
 
-后端应用：Python 3.9 / Flask / Flask-Login
+Backend: Python 3.9 / Flask / Flask-Login
 
-数据库与缓存：MySQL 8.0 / Redis (Alpine)
+Database & Cache: MySQL 8.0 / Redis (Alpine)
 
-监控与可视化：Prometheus / Node Exporter / Grafana
+Monitoring & Visualization: Prometheus / Node Exporter / Grafana
 
-操作系统：CentOS 7 (虚拟机环境)
+OS: CentOS 7
 
-📦 核心功能
-高可用负载均衡：Nginx 将前端请求轮询分发至两个 Flask 后端（web1/web2），支持单节点故障容错。
+✨ Key Features
+High Availability: Nginx round-robin distributes requests to two Flask backends (web1/web2) for fault tolerance.
 
-动态监控大盘：管理后台实时查询 Prometheus API，展示服务器的 CPU、内存、磁盘和系统负载。
+Dynamic Dashboard: The backend queries the Prometheus API in real-time to display CPU, memory, disk, and load averages.
 
-用户登录认证：基于 Flask-Login 和 MySQL，实现安全的用户鉴权与 Session 管理。
+Authentication: Secure user authentication and session management based on Flask-Login and MySQL.
 
-数据持久化与缓存：MySQL 持久化存储业务数据，Redis 缓存热点访问计数。
+Persistence & Caching: MySQL persists user and log data, while Redis caches hot access counts.
 
-全链路监控：Node Exporter 采集宿主机硬件指标，Prometheus 负责存储与告警规则计算，Grafana 负责高级可视化。
+Full-link Observability: Node Exporter collects host metrics, Prometheus calculates alerting rules, and Grafana provides advanced visualization.
 
-🚀 快速启动
-1. 前置要求
-已安装 Docker 与 Docker Compose
+🚀 Quick Start
+1. Prerequisites
+Docker and Docker Compose installed
 
-宿主机已放行相关端口（8080, 9090, 3000）
+Ports (8080, 9090, 3000) allowed on the host firewall
 
-2. 启动项目
+2. Deployment
 bash
-# 克隆项目
+# Clone the repository
 git clone https://github.com/gabecole7935-crypto/devops-monitoring-platform.git
 cd devops-monitoring-platform
 
-# 构建并启动所有容器
+# Build and start all containers in the background
 docker compose up -d --build
-3. 访问服务
-服务	访问地址	默认账号
-管理后台	http://localhost:8080	admin / admin123
-Prometheus	http://localhost:9090	无
+3. Access Services
+Service	URL	Default Credentials
+Web Dashboard	http://localhost:8080	admin / admin123
+Prometheus	http://localhost:9090	None
 Grafana	http://localhost:3000	admin / admin
-🛡️ 故障排查与验证记录
-在开发部署过程中，我排除了以下典型故障：
+🛡️ Troubleshooting
+During deployment, I resolved several typical issues:
 
-502 Bad Gateway：发现 web1 容器处于 Restarting 状态。使用 docker logs web1 定位到 Python 代码缺失依赖，重新 build 后恢复。
+502 Bad Gateway: Found web1 container in Restarting state. Used docker logs web1 to identify missing Python dependencies, rebuilt to fix.
 
-宿主机无法访问 8080 端口：排查发现是 VMware NAT 模式未配置端口转发，且宿主机防火墙未放行端口。通过配置 NAT 端口映射和 firewall-cmd 解决。
+Host Unreachable: Resolved NAT port forwarding issues in VMware and configured firewall-cmd on the host.
 
-Docker 拉取镜像超时：通过配置国内镜像加速器（daemon.json）和修改 DNS 解决。
+Docker Pull Timeout: Configured a domestic Docker registry mirror and DNS settings.
 
-Nginx 启动失败：修改 default.conf 后，使用 docker exec lb nginx -t 检查语法，定位到 proxy_pass 缺少 http:// 协议，修复后 reload 恢复。
+Nginx Start Failure: Used docker exec lb nginx -t to locate the missing http:// in proxy_pass, fixed and reloaded.
 
-📂 目录结构
+📂 Directory Structure
 text
 .
-├── docker-compose.yml          # 容器编排文件
-├── prometheus.yml              # Prometheus 采集配置
-├── lb/                         # Nginx 负载均衡配置
+├── docker-compose.yml          # Orchestration file
+├── prometheus.yml              # Prometheus config
+├── lb/                         # Nginx load balancer config
 │   └── default.conf
-├── web1/                       # 后端实例 1 (Flask)
+├── web1/                       # Backend Instance 1
 │   ├── app.py
 │   ├── requirements.txt
 │   ├── Dockerfile
-│   └── templates/              # HTML 模板 (登录页、大盘)
-└── web2/                       # 后端实例 2 (与 web1 相同，用于高可用)
+│   └── templates/
+└── web2/                       # Backend Instance 2 (same as web1)
