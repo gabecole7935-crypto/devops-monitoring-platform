@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>登录 · 服务器监控平台</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.card{
+  background:rgba(255,255,255,.95);
+  backdrop-filter:blur(20px);
+  border-radius:24px;
+  padding:48px 40px;
+  width:380px;
+  box-shadow:0 20px 60px rgba(0,0,0,.2);
+}
+h1{
+  font-size:26px;
+  font-weight:700;
+  text-align:center;
+  margin-bottom:8px;
+  color:#1d1d1f;
+}
+.sub{
+  text-align:center;
+  color:#6e6e73;
+  font-size:13px;
+  margin-bottom:32px;
+}
+input{
+  width:100%;
+  padding:14px 16px;
+  border:1px solid #e5e5ea;
+  border-radius:12px;
+  font-size:14px;
+  margin-bottom:16px;
+  outline:none;
+  transition:border .2s;
+}
+input:focus{border-color:#0071e3}
+button{
+  width:100%;
+  padding:14px;
+  background:#0071e3;
+  color:white;
+  border:none;
+  border-radius:12px;
+  font-size:15px;
+  font-weight:600;
+  cursor:pointer;
+  transition:background .2s;
+}
+button:hover{background:#0062c4}
+.flash{
+  background:#ffe5e5;
+  color:#d92121;
+  padding:10px 14px;
+  border-radius:10px;
+  font-size:13px;
+  margin-bottom:16px;
+  text-align:center;
+}
+.footer{
+  text-align:center;
+  color:#86868b;
+  font-size:11px;
+  margin-top:24px;
+}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>服务器监控平台</h1>
+  <p class="sub">Server Monitoring System</p>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="flash">{{ messages[0] }}</div>
+    {% endif %}
+  {% endwith %}
+
+  <form method="post">
+    <input type="text" name="username" placeholder="用户名" required>
+    <input type="password" name="password" placeholder="密码" required>
+    <button type="submit">登 录</button>
+  </form>
+
+  <p class="footer">Powered by Docker + Flask + Prometheus</p>
+</div>
+</body>
+</html>
