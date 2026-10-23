@@ -49,6 +49,10 @@ services:
     container_name: grafana
     ports:
       - "3000:3000"
+    environment:
+      - GF_SECURITY_ALLOW_EMBEDDING=true       
+      - GF_AUTH_ANONYMOUS_ENABLED=true         
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Viewer 
     restart: always
   redis:
     image: redis:alpine
@@ -62,6 +66,16 @@ services:
       MYSQL_DATABASE: testdb
     volumes:
       - mysql_data:/var/lib/mysql
+    restart: always
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    command:
+      - -nginx.scrape-uri=http://lb/stub_status
+    ports:
+      - "9113:9113"
+    depends_on:
+      - lb
     restart: always
 volumes:
   mysql_data:

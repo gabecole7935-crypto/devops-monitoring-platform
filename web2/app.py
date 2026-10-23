@@ -35,18 +35,15 @@ def load_user(user_id):
     cursor.execute("SELECT * FROM users WHERE id=%s", (user_id,))
     u = cursor.fetchone()
     conn.close()
-    if u:
-        return User(u['id'], u['username'], u['role'])
+    if u: return User(u['id'], u['username'], u['role'])
     return None
 
 def query_prom(expr):
     try:
         resp = requests.get(PROM, params={'query': expr}, timeout=3)
         result = resp.json()['data']['result']
-        if result:
-            return round(float(result[0]['value'][1]), 1)
-    except Exception:
-        pass
+        if result: return round(float(result[0]['value'][1]), 2)
+    except Exception: pass
     return 'N/A'
 
 def log_action(action):
@@ -72,8 +69,7 @@ def login():
             login_user(user)
             log_action(f"用户 {username} 登录成功")
             return redirect(url_for('dashboard'))
-        else:
-            flash('用户名或密码错误')
+        else: flash('用户名或密码错误')
     return render_template('login.html')
 
 @app.route('/logout')
@@ -88,8 +84,14 @@ def logout():
 def dashboard():
     cpu = query_prom('100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)')
     mem = query_prom('(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100')
-    disk = query_prom('(1 - node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100)')
+    disk = query_prom('(1 - node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100')
     load = query_prom('node_load1')
+    
+    nginx_conn = query_prom('nginx_connections_active')
+    nginx_qps = query_prom('rate(nginx_http_requests_total[1m])')
+    
+    prom_mem_raw = query_prom('process_resident_memory_bytes{job="prometheus"}')
+    prom_mem_mb = round(prom_mem_raw / 1024 / 1024, 1) if prom_mem_raw != 'N/A' else 'N/A'
 
     conn = get_db()
     cursor = conn.cursor()
@@ -99,11 +101,12 @@ def dashboard():
     alert_count = cursor.fetchone()['c']
     conn.close()
 
-    return render_template('dashboard.html', cpu=cpu, mem=mem, disk=disk, load=load, server_count=server_count, alert_count=alert_count)
+    return render_template('dashboard.html', cpu=cpu, mem=mem, disk=disk, load=load,
+                           server_count=server_count, alert_count=alert_count,
+                           nginx_conn=nginx_conn, nginx_qps=nginx_qps, prom_mem_mb=prom_mem_mb)
 
 @app.route('/health')
-def health():
-    return "OK", 200
+def health(): return "OK", 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
